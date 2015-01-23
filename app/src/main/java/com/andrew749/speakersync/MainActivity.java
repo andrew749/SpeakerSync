@@ -1,5 +1,7 @@
 package com.andrew749.speakersync;
 
+import android.bluetooth.BluetoothAdapter;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -11,6 +13,7 @@ import android.widget.Button;
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener{
     Button connectButton, createButton;
+    private BluetoothAdapter bluetoothAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,6 +22,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         createButton=(Button)findViewById(R.id.createButton);
         connectButton.setOnClickListener(this);
         createButton.setOnClickListener(this);
+        //static call to get default bluetooth adapter
+        bluetoothAdapter=BluetoothAdapter.getDefaultAdapter();
+
+
+        //intent to turn on bluetooth
+        Intent turnOn = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        startActivityForResult(turnOn, 0);
     }
 
 
@@ -56,5 +66,5 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         }
     }
-    
+
 }
