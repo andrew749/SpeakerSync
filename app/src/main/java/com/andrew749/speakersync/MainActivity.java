@@ -4,14 +4,21 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Button;
 
 
-public class MainActivity extends ActionBarActivity {
-
+public class MainActivity extends ActionBarActivity implements View.OnClickListener{
+    Button connectButton, createButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        connectButton=(Button) findViewById(R.id.connectButton);
+        createButton=(Button)findViewById(R.id.createButton);
+        connectButton.setOnClickListener(this);
+        createButton.setOnClickListener(this);
     }
 
 
@@ -36,4 +43,18 @@ public class MainActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+    @Override
+    public void onClick(View v) {
+        int id=v.getId();
+        if(id==R.id.connectButton){
+            //do connect action
+
+        }
+        else if (id==R.id.createButton){
+            //do create action
+
+
+        }
+    }
+    
 }
