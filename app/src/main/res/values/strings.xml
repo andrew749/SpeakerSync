@@ -4,5 +4,8 @@
     <string name="app_name">SpeakerSync</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-
+    <string name="launch_screen_title">SpeakerSync</string>
+    <string name="description">Play songs with your friends.</string>
+    <string name="createbutton">Create</string>
+    <string name="connectbutton">Connect</string>
 </resources>
