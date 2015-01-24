@@ -75,7 +75,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         } else if (id == R.id.createButton) {
             //do create action
-            
+
 
         }
     }
