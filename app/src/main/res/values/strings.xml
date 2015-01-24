@@ -8,4 +8,5 @@
     <string name="description">Play songs with your friends.</string>
     <string name="createbutton">Create</string>
     <string name="connectbutton">Connect</string>
+    <string name="song_title_placeholder">Untitled Song</string>
 </resources>
