@@ -16,8 +16,7 @@ import java.io.IOException;
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener {
     Button connectButton, createButton;
-    private BluetoothAdapter bluetoothAdapter;
-    private BluetoothServerSocket serverSocket;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +27,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         connectButton.setOnClickListener(this);
         createButton.setOnClickListener(this);
         //static call to get default bluetooth adapter
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
 
     }
@@ -44,53 +42,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private void doClient() {
 
 
-    }
-
-
-    /*Methods for server side of application*/
-    private void doServer() {
-        makeDiscoverable();
-        //intent to turn on bluetooth
-        Intent turnOn = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-        startActivityForResult(turnOn, 0);
-        while (serverSocket == null) ;
-        AcceptThread();
-
-    }
-
-    private void makeDiscoverable() {
-        Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
-        startActivity(discoverableIntent);
-    }
-
-    public void AcceptThread() {
-        BluetoothServerSocket tmp = null;
-        try {
-            tmp = bluetoothAdapter.listenUsingRfcommWithServiceRecord("MYYAPP", MY_UUID_SECURE);
-
-        } catch (IOException e) {
-        }
-        serverSocket = tmp;
-    }
-
-    public void run() {
-        BluetoothSocket socket = null;
-        while (true) {
-            try {
-                socket = serverSocket.accept();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            if (socket != null) {
-                try {
-                    serverSocket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
-            }
-        }
     }
 
 
@@ -124,7 +75,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         } else if (id == R.id.createButton) {
             //do create action
-            doServer();
+            
 
         }
     }
