@@ -3,6 +3,9 @@ package com.andrew749.speakersync;
 import android.app.Activity;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.widget.ImageButton;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,11 +16,17 @@ import java.io.IOException;
  * Created by andrew on 1/24/15.
  */
 public class Player extends Activity {
-
+    private SeekBar seekBar;
+    private ImageButton pauseButton, playButton;
+    private TextView songTitle, currentTime, songDuration;
+    private MediaPlayer player;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setContentView(R.layout.activity_main);
+        songTitle = (TextView)findViewById(R.id.songName);
+        currentTime = (TextView)findViewById(R.id.curTime);
+        songDuration = (TextView)findViewById(R.id.fullTime);
     }
 
     private void playMp3(byte[] mp3SoundByteArray) {
