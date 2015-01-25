@@ -29,7 +29,6 @@ public class Player extends Activity {
         songDuration = (TextView)findViewById(R.id.fullTime);
         playButton = (ImageButton)findViewById(R.id.playButton);
         pauseButton = (ImageButton)findViewById(R.id.pauseButton);
-        songTitle.setText("Hooked on a Feeling");
         byteStream = getIntent().getByteArrayExtra("Data");
         playMp3(byteStream);
     }
