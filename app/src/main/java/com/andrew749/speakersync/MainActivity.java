@@ -1,28 +1,30 @@
 package com.andrew749.speakersync;
 
-import android.content.BroadcastReceiver;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothServerSocket;
+import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
-import android.os.Looper;
 import android.support.v7.app.ActionBarActivity;
+import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.UUID;
 
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener {
     Button connectButton, createButton;
-    WifiP2pManager mManager;
-    WifiP2pManager.Channel mChannel;
-    BroadcastReceiver mReceiver;
-    IntentFilter mIntentFilter;
+    BluetoothDevice serverDevice;
+
+    String uuid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,52 +34,42 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         createButton = (Button) findViewById(R.id.createButton);
         connectButton.setOnClickListener(this);
         createButton.setOnClickListener(this);
-
-        mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
-        mChannel = mManager.initialize(this, Looper.getMainLooper(), null);
-        mReceiver = new SongBroadcastReceiver();
-        mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
-        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
-        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
-        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
-
+        TelephonyManager tManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        uuid = tManager.getDeviceId();
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     }
 
-    Runnable acceptConnections = new Runnable() {
-        @Override
-        public void run() {
-            run();
+    public void AcceptThread() {
+        BluetoothServerSocket tmp = null;
+        try {
+            tmp = mBluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord("MYAPP", UUID.fromString(uuid));
+
+        } catch (IOException e) {
         }
-    };
+        mmServerSocket = tmp;
+    }
 
-
-
-    private void serachForPeers() {
-        mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
-            @Override
-            public void onSuccess() {
-
-            }
-
-            @Override
-            public void onFailure(int reasonCode) {
-
-            }
-        });
+    private void searchForPeers() {
+        Log.d("SS", "searching for peers");
+//        serverDevice = mBluetoothAdapter.getRemoteDevice("2c:54:cf:cf:6d:84:a9");
+        serverDevice = mBluetoothAdapter.getRemoteDevice("bc:f5:ac:83:06:bc");
+        try {
+            serverDevice.createInsecureRfcommSocketToServiceRecord(UUID.fromString("MYAPP"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.d("SS", serverDevice.getName());
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver(mReceiver, mIntentFilter);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(mReceiver);
     }
 
     @Override
@@ -87,19 +79,43 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+    public BluetoothAdapter mBluetoothAdapter;
+    private BluetoothServerSocket mmServerSocket;
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+    public void run() {
+        BluetoothSocket socket = null;
+        try {
+            socket = mmServerSocket.accept();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-        return super.onOptionsItemSelected(item);
+
+    }
+
+    private void doServer() {
+
+        Intent discoverableIntent = new
+                Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+        startActivity(discoverableIntent);
+        while (mmServerSocket == null) ;
+        Log.d("SS", "Started bluetooth");
+        AcceptThread();
+        r.run();
+
+    }
+
+    Runnable r = new Runnable() {
+        @Override
+        public void run() {
+            run();
+        }
+    };
+
+    private void connectToServer() {
+
+
     }
 
     @Override
@@ -107,11 +123,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         int id = v.getId();
         if (id == R.id.connectButton) {
             //do connect action
-
+            searchForPeers();
         } else if (id == R.id.createButton) {
             //do create action
-
-
+            doServer();
         }
     }
 
@@ -139,29 +154,4 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
         return bFile;
     }
-
-    class SongBroadcastReceiver extends BroadcastReceiver {
-        private WifiP2pManager mManager;
-        WifiP2pManager.Channel channel;
-
-        public SongBroadcastReceiver() {
-        }
-
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-
-            if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)) {
-                // Check to see if Wi-Fi is enabled and notify appropriate activity
-            } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
-                // Call WifiP2pManager.requestPeers() to get a list of current peers
-            } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
-                // Respond to new connection or disconnections
-            } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
-                // Respond to this device's wifi state changing
-            }
-        }
-    }
-
 }
