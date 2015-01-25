@@ -4,10 +4,8 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.telephony.TelephonyManager;
@@ -25,8 +23,7 @@ import java.util.UUID;
 public class MainActivity extends ActionBarActivity implements View.OnClickListener {
     Button connectButton, createButton;
     BluetoothDevice serverDevice;
-    BroadcastReceiver mReceiver;
-    IntentFilter mIntentFilter;
+
     String uuid;
 
     @Override
@@ -39,13 +36,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         createButton.setOnClickListener(this);
         TelephonyManager tManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         uuid = tManager.getDeviceId();
-
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     }
 
     public void AcceptThread() {
         BluetoothServerSocket tmp = null;
         try {
-            tmp = mBluetoothAdapter.listenUsingRfcommWithServiceRecord("MYAPP", UUID.fromString(uuid));
+            tmp = mBluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord("MYAPP", UUID.fromString(uuid));
 
         } catch (IOException e) {
         }
@@ -54,8 +51,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     private void searchForPeers() {
         Log.d("SS", "searching for peers");
-        serverDevice = mBluetoothAdapter.getBondedDevices();
-
+//        serverDevice = mBluetoothAdapter.getRemoteDevice("2c:54:cf:cf:6d:84:a9");
+        serverDevice = mBluetoothAdapter.getRemoteDevice("bc:f5:ac:83:06:bc");
+        try {
+            serverDevice.createInsecureRfcommSocketToServiceRecord(UUID.fromString("MYAPP"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.d("SS", serverDevice.getName());
 
     }
 
@@ -81,26 +84,17 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     public void run() {
         BluetoothSocket socket = null;
-        while (true) {
-            try {
-                socket = mmServerSocket.accept();
-            } catch (IOException e) {
-                break;
-            }
-            if (socket != null) {
-                try {
-                    mmServerSocket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
-            }
+        try {
+            socket = mmServerSocket.accept();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
+
     }
 
     private void doServer() {
 
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         Intent discoverableIntent = new
                 Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
         discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
@@ -129,7 +123,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         int id = v.getId();
         if (id == R.id.connectButton) {
             //do connect action
-
+            searchForPeers();
         } else if (id == R.id.createButton) {
             //do create action
             doServer();
