@@ -10,4 +10,24 @@
         android:text="@string/song_title_placeholder"
         android:id="@+id/songName"
         android:layout_gravity="center" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Current Time:"
+        android:id="@+id/curTime"
+        android:layout_gravity="left|bottom" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Song Duration:"
+        android:id="@+id/fullTime"
+        android:layout_gravity="right|bottom" />
+
+    <SeekBar
+        android:layout_width="249dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/seekBar"
+        android:layout_gravity="center_horizontal|bottom" />
 </FrameLayout>
