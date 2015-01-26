@@ -4,11 +4,9 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -23,8 +21,8 @@ import java.util.UUID;
 public class MainActivity extends ActionBarActivity implements View.OnClickListener {
     Button connectButton, createButton;
     BluetoothDevice serverDevice;
-
-    String uuid;
+    private static final UUID MY_UUID = UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");
+    BluetoothSocket socket = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,16 +32,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         createButton = (Button) findViewById(R.id.createButton);
         connectButton.setOnClickListener(this);
         createButton.setOnClickListener(this);
-        TelephonyManager tManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        uuid = tManager.getDeviceId();
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     }
 
     public void AcceptThread() {
         BluetoothServerSocket tmp = null;
         try {
-            tmp = mBluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord("MYAPP", UUID.fromString(uuid));
-
+            tmp = mBluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord("MYAPP", MY_UUID);
         } catch (IOException e) {
         }
         mmServerSocket = tmp;
@@ -82,39 +77,36 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     public BluetoothAdapter mBluetoothAdapter;
     private BluetoothServerSocket mmServerSocket;
 
-    public void run() {
-        BluetoothSocket socket = null;
+    public void run1() {
         try {
+            Log.d("SS", "listening for connect");
             socket = mmServerSocket.accept();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-
+        Log.d("SS", "connected!!!1");
     }
 
     private void doServer() {
-
-        Intent discoverableIntent = new
-                Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
         discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
         startActivity(discoverableIntent);
-        while (mmServerSocket == null) ;
-        Log.d("SS", "Started bluetooth");
         AcceptThread();
+        Log.d("SS", "Started bluetooth");
         r.run();
+
 
     }
 
     Runnable r = new Runnable() {
         @Override
         public void run() {
-            run();
+            run1();
         }
     };
 
     private void connectToServer() {
-
 
     }
 
@@ -132,8 +124,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     private byte[] convertToByteStream() {
         FileInputStream fileInputStream = null;
-
-        File file = new File("C:\\testing.txt");
+        Log.d("SS", "writing byte stream");
+        File file = new File("");
 
         byte[] bFile = new byte[(int) file.length()];
 
