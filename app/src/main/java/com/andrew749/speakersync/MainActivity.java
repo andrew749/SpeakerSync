@@ -10,11 +10,16 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -23,6 +28,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     BluetoothDevice serverDevice;
     private static final UUID MY_UUID = UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");
     BluetoothSocket socket = null;
+    public BluetoothAdapter mBluetoothAdapter;
+    private BluetoothServerSocket mmServerSocket;
+    private Set<BluetoothDevice> pairedDevices;
+    ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +42,21 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         connectButton.setOnClickListener(this);
         createButton.setOnClickListener(this);
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        Intent turnOnBluetooth=new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        startActivityForResult(turnOnBluetooth,0);
+        listView=(ListView)findViewById(R.id.pairedDevices);
+        updateList();
     }
+    private void updateList(){
 
+        pairedDevices=mBluetoothAdapter.getBondedDevices();
+        ArrayList devices=new ArrayList<>();
+        for(BluetoothDevice bt:pairedDevices)
+            devices.add(bt.getName());
+            ArrayAdapter adapter=new ArrayAdapter(this,android.R.layout.simple_list_item_1,devices);
+            listView.setAdapter(adapter);
+
+    }
     public void AcceptThread() {
         BluetoothServerSocket tmp = null;
         try {
@@ -74,8 +96,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         return true;
     }
 
-    public BluetoothAdapter mBluetoothAdapter;
-    private BluetoothServerSocket mmServerSocket;
+
 
     public void run1() {
         try {
@@ -115,7 +136,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         int id = v.getId();
         if (id == R.id.connectButton) {
             //do connect action
-            searchForPeers();
+            updateList();
         } else if (id == R.id.createButton) {
             //do create action
             doServer();
