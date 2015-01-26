@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:id="@+id/">
 
     <TextView
         android:layout_width="wrap_content"
@@ -14,20 +16,39 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Current Time:"
+        android:text="Current Time"
         android:id="@+id/curTime"
         android:layout_gravity="left|bottom" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Song Duration:"
+        android:text="Song Duration"
         android:id="@+id/fullTime"
         android:layout_gravity="right|bottom" />
 
     <SeekBar
-        android:layout_width="249dp"
+        android:layout_width="235dp"
         android:layout_height="wrap_content"
         android:id="@+id/seekBar"
         android:layout_gravity="center_horizontal|bottom" />
+
+    <ImageButton
+        android:layout_width="110dp"
+        android:layout_height="90dp"
+        android:id="@+id/playButton"
+        android:layout_gravity="right|center_vertical"
+        android:src="@drawable/play_button"
+        android:scaleType="centerInside"
+        android:background="@android:color/transparent" />
+
+    <ImageButton
+        android:layout_width="110dp"
+        android:layout_height="90dp"
+        android:id="@+id/pauseButton"
+        android:layout_gravity="left|center_vertical"
+        android:src="@drawable/pause_button"
+        android:scaleType="centerInside"
+        android:background="@android:color/transparent" />
+
 </FrameLayout>

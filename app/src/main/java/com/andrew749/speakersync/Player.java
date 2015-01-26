@@ -19,7 +19,7 @@ public class Player extends Activity {
     private SeekBar seekBar;
     private ImageButton pauseButton, playButton;
     private TextView songTitle, currentTime, songDuration;
-    private MediaPlayer player;
+    private byte [] byteStream;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,6 +27,10 @@ public class Player extends Activity {
         songTitle = (TextView)findViewById(R.id.songName);
         currentTime = (TextView)findViewById(R.id.curTime);
         songDuration = (TextView)findViewById(R.id.fullTime);
+        playButton = (ImageButton)findViewById(R.id.playButton);
+        pauseButton = (ImageButton)findViewById(R.id.pauseButton);
+        byteStream = getIntent().getByteArrayExtra("Data");
+        playMp3(byteStream);
     }
 
     private void playMp3(byte[] mp3SoundByteArray) {
