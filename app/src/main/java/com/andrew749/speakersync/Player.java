@@ -66,16 +66,19 @@ public class Player extends Activity {
             ex.printStackTrace();
         }
     }
-    public void resumeMP3(){
-        if(state==PLAY_STATE.PAUSED){
+
+    public void resumeMP3() {
+        if (state == PLAY_STATE.PAUSED) {
             mediaPlayer.start();
         }
     }
-    public  void stopMP3(){
-        if(state==PLAY_STATE.PLAYING||state==PLAY_STATE.PAUSED){
+
+    public void stopMP3() {
+        if (state == PLAY_STATE.PLAYING || state == PLAY_STATE.PAUSED) {
             mediaPlayer.stop();
         }
     }
+
     public void pauseMP3() {
         if (state == PLAY_STATE.PLAYING) {
             mediaPlayer.pause();

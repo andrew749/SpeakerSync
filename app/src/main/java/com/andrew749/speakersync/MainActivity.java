@@ -18,7 +18,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -42,21 +41,23 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         connectButton.setOnClickListener(this);
         createButton.setOnClickListener(this);
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        Intent turnOnBluetooth=new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-        startActivityForResult(turnOnBluetooth,0);
-        listView=(ListView)findViewById(R.id.pairedDevices);
+        Intent turnOnBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        startActivityForResult(turnOnBluetooth, 0);
+        listView = (ListView) findViewById(R.id.pairedDevices);
         updateList();
     }
-    private void updateList(){
 
-        pairedDevices=mBluetoothAdapter.getBondedDevices();
-        ArrayList devices=new ArrayList<>();
-        for(BluetoothDevice bt:pairedDevices)
+    private void updateList() {
+
+        pairedDevices = mBluetoothAdapter.getBondedDevices();
+        ArrayList devices = new ArrayList<>();
+        for (BluetoothDevice bt : pairedDevices)
             devices.add(bt.getName());
-            ArrayAdapter adapter=new ArrayAdapter(this,android.R.layout.simple_list_item_1,devices);
-            listView.setAdapter(adapter);
+        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, devices);
+        listView.setAdapter(adapter);
 
     }
+
     public void AcceptThread() {
         BluetoothServerSocket tmp = null;
         try {
@@ -95,7 +96,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-
 
 
     public void run1() {
