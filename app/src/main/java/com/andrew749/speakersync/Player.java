@@ -19,16 +19,23 @@ public class Player extends Activity {
     private SeekBar seekBar;
     private ImageButton pauseButton, playButton;
     private TextView songTitle, currentTime, songDuration;
-    private byte [] byteStream;
+    private byte[] byteStream;
+
+    enum PLAY_STATE {NOT_PLAYING, PLAYING, PAUSED, STOPPED}
+
+    ;
+    public PLAY_STATE state;
+    static MediaPlayer mediaPlayer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        songTitle = (TextView)findViewById(R.id.songName);
-        currentTime = (TextView)findViewById(R.id.curTime);
-        songDuration = (TextView)findViewById(R.id.fullTime);
-        playButton = (ImageButton)findViewById(R.id.playButton);
-        pauseButton = (ImageButton)findViewById(R.id.pauseButton);
+        songTitle = (TextView) findViewById(R.id.songName);
+        currentTime = (TextView) findViewById(R.id.curTime);
+        songDuration = (TextView) findViewById(R.id.fullTime);
+        playButton = (ImageButton) findViewById(R.id.playButton);
+        pauseButton = (ImageButton) findViewById(R.id.pauseButton);
         byteStream = getIntent().getByteArrayExtra("Data");
         playMp3(byteStream);
     }
@@ -44,7 +51,7 @@ public class Player extends Activity {
 
             // Tried reusing instance of media player
             // but that resulted in system crashes...
-            MediaPlayer mediaPlayer = new MediaPlayer();
+            mediaPlayer = new MediaPlayer();
 
             // Tried passing path directly, but kept getting
             // "Prepare failed.: status=0x1"
@@ -57,6 +64,21 @@ public class Player extends Activity {
         } catch (IOException ex) {
             String s = ex.toString();
             ex.printStackTrace();
+        }
+    }
+    public void resumeMP3(){
+        if(state==PLAY_STATE.PAUSED){
+            mediaPlayer.start();
+        }
+    }
+    public  void stopMP3(){
+        if(state==PLAY_STATE.PLAYING||state==PLAY_STATE.PAUSED){
+            mediaPlayer.stop();
+        }
+    }
+    public void pauseMP3() {
+        if (state == PLAY_STATE.PLAYING) {
+            mediaPlayer.pause();
         }
     }
 }
